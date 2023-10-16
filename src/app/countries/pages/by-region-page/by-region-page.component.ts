@@ -1,23 +1,39 @@
 import { Component } from '@angular/core';
-import { Country } from '../../interfaces/country';
+import { Country } from '../../interfaces/country.interface';
 import { CountriesService } from '../../services/countries.service';
+import { Region } from '../../interfaces/region.type';
+
 
 @Component({
   selector: 'app-by-region-page',
   templateUrl: './by-region-page.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ByRegionPageComponent {
+  public initialValue: Region = '';
   public countries: Country[] = [];
+  public regions: Region[] = [
+    'Africa',
+    'Americas',
+    'Asia',
+    'Europe',
+    'Oceania',
+  ];
 
-  constructor(private countriesService: CountriesService){}
+  public selectedRegion?: Region;
 
-  searchByRegion(term: string): void{
+  constructor(private countriesService: CountriesService) { }
+  ngOnInit(): void {
+    this.countries = this.countriesService.cacheStore.byRegion.countries;
+    this.selectedRegion = this.countriesService.cacheStore.byRegion.region;
+  }
+
+  searchByRegion(region: Region): void {
     // console.log('recibiendo', term)
+    this.selectedRegion = region;
 
-    this.countriesService.searchRegion(term)
-      .subscribe(countries => this.countries = countries)
-
+    this.countriesService
+      .searchRegion(region)
+      .subscribe((countries) => (this.countries = countries));
   }
 }
